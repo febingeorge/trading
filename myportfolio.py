@@ -3,17 +3,18 @@ import pandas as pd
 import datetime
 import numpy as np
 import matplotlib.pyplot as plt
+import csv
 
 def getvalue(stocks,numshares):
-    now = datetime.date.now()
+    now = datetime.datetime.now()
     start = datetime.date(2016,9,1)
-    stockdata = web.DataReader(stockname, 'yahoo',start,now)
+    stockdata = web.DataReader(stocks, 'yahoo',start,now)
     cleandata = stockdata.ix['Adj Close']
     dataFrame = pd.DataFrame(cleandata)
     dataFrame.reset_index(inplace=True, drop=False)
     stocklist = dataFrame.as_matrix()
     for x in range(1,len(stocklist[0])):
-        stocklist[:,x] *= numshares[x-1]
+        stocklist[:,x] *= int(numshares[x-1])
     
     dates = stocklist[:,0]
     stocklist = np.delete(stocklist,0,1)
@@ -25,15 +26,16 @@ def getvalue(stocks,numshares):
 
 
 if __name__ == '__main__':
-    csvfile = open('ListOfScrips.csv')
-        stockname = csv.reader(csvfile)
-        stocks = []
-        numshares = []
-        for i,row in enumerate(stockname):
-            if i == 1:
-                continue
-            else:
-                stocks.append(row[0])
-                numshares.append(row[1])
-        getvalue(stocks,numshares)
+	csvfile = open('portfolio.csv')
+	stockname = csv.reader(csvfile)
+	stocks = []
+	numshares = []
+	for i,row in enumerate(stockname):
+		if i == 0:
+			continue
+		else:
+			stocks.append(row[0])
+			numshares.append(row[1])
+	#print stocks
+	getvalue(stocks,numshares)
 
